@@ -1,0 +1,50 @@
+pipeline {
+  agent any
+  tools {
+    maven 'maven'
+  }
+  options {
+    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')
+    disableConcurrentBuilds()
+  }
+  stages {
+    stage ('Build and Test (kra7je)') {
+      steps {
+        sh script: 'mvn clean ', label: '2f1777'
+        sh script: 'mvn compile ', label: 'qgq7kw'
+        sh script: 'mvn test ', label: 'm1o0du'
+      } //end steps
+    } // end stage Build and Test
+    stage ('Sonar Check (gveh11)') {
+      steps {
+        withSonarQubeEnv('') {
+    sh script: 'mvn sonar:sonar ', label: '51dayc'
+}
+
+timeout(time: 30, unit: 'MINUTES') { 
+    waitForQualityGate abortPipeline: true 
+}
+      } //end steps
+    } // end stage Sonar Check
+    stage ('Deploy (fv4lpb)') {
+      steps {
+        script { 
+	rtUpload (
+		serverId: "",
+		spec:
+			"""{
+				"files": [
+					{
+						"pattern": "",
+						"target" : ""
+					}
+				]
+			}"""
+	)
+}
+sh script: 'sleep 0.005', label: 'i9a4c9'
+
+      } //end steps
+    } // end stage Deploy
+  }
+}
